@@ -5,8 +5,8 @@ import os
 import time
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from backend.threads.thread_manager import get_thread, create_thread
-from backend.routes.user import load_users, save_users
+from threads.thread_manager import get_thread, create_thread
+from routes.user import load_users, save_users
 
 chat_route = Blueprint('chat', __name__)
 
