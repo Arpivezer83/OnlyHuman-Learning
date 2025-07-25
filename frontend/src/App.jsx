@@ -4,7 +4,7 @@ import Dashboard from "./pages/Dashboard";
 import Practice from "./pages/Practice";
 import Contact from "./pages/Contact"; // <-- Ez legyen a pages-ből!
 import Booking from "./pages/Booking"; // <-- új import
-
+import Profile from "./pages/Profile";
 function App() {
   return (
     <Router>
@@ -13,7 +13,7 @@ function App() {
         <Route path="/practice" element={<Practice />} />
         <Route path="/contact" element={<Contact />} /> {/* 👈 ez kell! */}
         <Route path="/booking" element={<Booking />} />
-
+        <Route path="/profile" element={Profile} />
       </Routes>
     </Router>
   );

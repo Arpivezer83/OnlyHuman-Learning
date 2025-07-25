@@ -87,8 +87,8 @@ export default function Contact() {
           <FaFacebookMessenger />{" "}
           <span>
             Messenger:{" "}
-            <a href="https://m.me/yourusername" className="underline hover:text-blue-900">
-              m.me/yourusername
+            <a href="https://www.facebook.com/a.arpi83/" className="underline hover:text-blue-900">
+              https://www.facebook.com/a.arpi83/
             </a>
           </span>
         </div>
@@ -108,7 +108,7 @@ export default function Contact() {
         </div>
 
         <div className="flex items-center gap-3 text-green-600">
-          <FaPhone /> <span>Telefon: +36 30 123 4567</span>
+          <FaPhone /> <span>Telefon: +36 30 146 32 73</span>
         </div>
 
         <div className="flex items-center gap-3 text-gray-800">
