@@ -16,30 +16,37 @@ export default function Profile() {
     goals: ""
   });
 
-  // 🔄 Betöltés a backendről
+  // 🔄 Betöltés a backendről (ideiglenesen teljes URL-el, proxy nélkül)
   useEffect(() => {
-    fetch("/api/profile")
-      .then((res) => res.json())
+    fetch("http://localhost:5000/api/profile")
+      .then((res) => {
+        if (!res.ok) throw new Error("Hiba a backend elérésében");
+        return res.json();
+      })
       .then((data) => setForm(data))
-      .catch((err) => console.error("Hiba a profil betöltésekor:", err));
+      .catch((err) =>
+        console.error("🔴 Hiba a profil betöltésekor:", err.message)
+      );
   }, []);
 
-  // 💾 Mentés a backendre
+  // 💾 Mentés a backendre (ideiglenesen teljes URL-el, proxy nélkül)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/profile", {
+      const res = await fetch("http://localhost:5000/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form)
       });
+
       if (res.ok) {
-        alert("A profil adatai elmentve ✅");
+        alert("✅ A profil adatai elmentve!");
       } else {
-        alert("❌ Hiba történt a mentés során");
+        const data = await res.json();
+        alert(`❌ Hiba: ${data.error || "Ismeretlen hiba"}`);
       }
     } catch (err) {
-      console.error("Mentési hiba:", err);
+      console.error("🔴 Mentési hiba:", err.message);
       alert("⚠️ Nem sikerült elmenteni a profil adatokat.");
     }
   };
@@ -53,7 +60,6 @@ export default function Profile() {
     <div className="max-w-4xl mx-auto p-6 mt-10 bg-white rounded shadow-md">
       <h2 className="text-3xl font-bold mb-6">👤 Profilom</h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Mezők */}
         {[
           ["Név", "name"],
           ["E-mail", "email", "email"],
@@ -77,7 +83,6 @@ export default function Profile() {
           </div>
         ))}
 
-        {/* Külön mezők teljes szélességen */}
         <div className="md:col-span-2">
           <label className="block mb-1 font-medium">Egyéb elérhetőségek</label>
           <input

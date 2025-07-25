@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import BubbleMenuItem from "../components/BubbleMenuItem";
-import OwlMascot from "../components/OwlMascot";
+import OwlMascot from "../components/Mascots/OwlMascot";
+import PenguinMascot from "../components/Mascots/PenguinMascot";
+import TurtleMascot from "../components/Mascots/TurtleMascot";
 
 export default function Dashboard() {
   const [today, setToday] = useState("");
@@ -61,7 +63,11 @@ export default function Dashboard() {
       </div>
 
       {/* Bagoly figura */}
+      
       <OwlMascot />
+      <PenguinMascot />
+      <TurtleMascot />
+
     </div>
   );
 }
