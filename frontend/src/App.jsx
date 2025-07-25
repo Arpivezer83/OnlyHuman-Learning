@@ -1,36 +1,22 @@
-import LandingPage from "./components/LandingPage";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import Dashboard from "./components/Dashboard";
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import EnglishPage from "./components/EnglishPage";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Practice from "./pages/Practice";
+import Contact from "./pages/Contact"; // <-- Ez legyen a pages-ből!
+import Booking from "./pages/Booking"; // <-- új import
 
-function ProtectedRoute({ children }) {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
-}
-
-export default function App() {
+function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/english" element={
-          <ProtectedRoute>
-            <EnglishPage />
-          </ProtectedRoute>
-        } />
-        <Route path="*" element={<div>404 – oldal nem található</div>} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/practice" element={<Practice />} />
+        <Route path="/contact" element={<Contact />} /> {/* 👈 ez kell! */}
+        <Route path="/booking" element={<Booking />} />
+
       </Routes>
     </Router>
   );
 }
+
+export default App;

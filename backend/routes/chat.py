@@ -48,14 +48,28 @@ def search_matek(query, top_k=3):
 
 @chat_route.route("/chat", methods=["POST"])
 def chat():
-    data = request.json
+    if not request.is_json:
+        print("❌ Hibás Content-Type, nem JSON")  # LOG
+        return jsonify({"error": "Hiányzó vagy hibás JSON kérés"}), 400
+
+    data = request.get_json()
+    print("📩 Kapott adatok:", data)  # LOG
+
     user_id = data.get("user_id")
     agent_type = data.get("agent_type")
-    user_message = data.get("message")
+    user_message = data.get("user_message")
 
-    # Ellenőrzés
+    if not user_id or not agent_type or not user_message:
+        print("❌ Hiányzó mező(ke):", {
+            "user_id": user_id,
+            "agent_type": agent_type,
+            "user_message": user_message
+        })  # LOG
+        return jsonify({"error": "Hiányzó mezők a kérésben"}), 400
+
     agent_key = agent_key_map.get(agent_type)
     if not agent_key:
+        print(f"❌ Ismeretlen agent típus: {agent_type}")
         return jsonify({"error": "Ismeretlen agent típus"}), 400
 
     assistant_id = agents[agent_key]
@@ -89,27 +103,30 @@ def chat():
     else:
         message_content = user_message
 
-    # Felhasználói üzenet hozzáadása (matek esetén kontextussal együtt)
-    openai.beta.threads.messages.create(
-        thread_id=thread_id,
-        role="user",
-        content=message_content
-    )
+    try:
+        openai.beta.threads.messages.create(
+            thread_id=thread_id,
+            role="user",
+            content=message_content
+        )
 
-    # Run indítás
-    run = openai.beta.threads.runs.create(
-        thread_id=thread_id,
-        assistant_id=assistant_id
-    )
+        run = openai.beta.threads.runs.create(
+            thread_id=thread_id,
+            assistant_id=assistant_id
+        )
 
-    # Válasz várakozás
-    while True:
-        run_status = openai.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
-        if run_status.status == "completed":
-            messages = openai.beta.threads.messages.list(thread_id=thread_id)
-            response = messages.data[0].content[0].text.value
-            return jsonify({"response": response})
-        elif run_status.status == "failed":
-            return jsonify({"error": "Run failed"}), 500
-        else:
-            time.sleep(1)
+        # Várakozás a válaszra
+        while True:
+            run_status = openai.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run.id)
+            if run_status.status == "completed":
+                messages = openai.beta.threads.messages.list(thread_id=thread_id)
+                response = messages.data[0].content[0].text.value
+                return jsonify({"response": response})
+            elif run_status.status == "failed":
+                print("❌ Assistant válasz futás közben elbukott.")
+                return jsonify({"error": "Run failed"}), 500
+            else:
+                time.sleep(1)
+    except Exception as e:
+        print(f"❌ Váratlan hiba a chat válasz feldolgozásakor: {e}")
+        return jsonify({"error": "Belső hiba"}), 500
